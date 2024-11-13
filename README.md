@@ -1,1 +1,1 @@
-# reservas
+# reservas es una app de reservas Hoteleras
