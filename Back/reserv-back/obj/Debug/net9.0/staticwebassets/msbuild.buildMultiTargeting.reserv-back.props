@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\reserv-back.props" />
+</Project>
