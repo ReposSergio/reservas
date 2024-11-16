@@ -1,6 +1,0 @@
-@reserv_back_HostAddress = http://localhost:5111
-
-GET {{reserv_back_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
