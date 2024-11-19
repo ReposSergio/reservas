@@ -11,15 +11,19 @@ const ReservationForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(clientId,
+      serviceId,
+      reservationDate,
+      notes);
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/reservations",
+        "http://localhost:5000/api/bookings",
         {
           clientId,
           serviceId,
           reservationDate,
-          notes,
+          notes        
         }
       );
 
@@ -109,8 +113,7 @@ const ReservationForm: React.FC = () => {
       >
         Create Reservation
       </button>
-      <a
-        type="submit"
+      <a href="http://localhost:3000/reserva/editar"
         className=" block w-full bg-indigo-600 text-center text-white py-2 px-4  m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Edit Reservation
