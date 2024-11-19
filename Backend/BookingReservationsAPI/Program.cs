@@ -1,36 +1,39 @@
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
-using Microsoft.AspNetCore.Diagnostics;
+using BookingReservationsAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura Entity Framework con PostgreSQL
-builder.Services.AddDbContext<BookingContext>(options =>
+// Configurar DbContext con PostgreSQL
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
-// Configura el manejo de excepciones global
-app.UseExceptionHandler(errorApp =>
+if (app.Environment.IsDevelopment())
 {
-    errorApp.Run(async context =>
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/json";
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-        var error = context.Features.Get<IExceptionHandlerFeature>();
-        if (error != null)
-        {
-            await context.Response.WriteAsJsonAsync(new { message = "An error occurred. Please try again later." });
-        }
-    });
-});
+app.UseCors("AllowLocalhost3000");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
-
