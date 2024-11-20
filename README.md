@@ -1,6 +1,6 @@
-# reservas es una app de reservas Hoteleras
+# Proyecto Prueba Reservas Hoteleras
 
-#Apis
+## Apis
 
 ## POST /api/bookings -> Crear una nueva reserva
 ## GET /api/bookings/{id} -> Obtener una reserva por su ID
