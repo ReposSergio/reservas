@@ -6,7 +6,7 @@ export default function Home() {
       {/* Hero Section */}
       <div
         className="relative h-screen bg-cover bg-center"
-        style={{ backgroundImage: 'url("/images/hotel-background.jpg")' }} // Cambia la ruta según tu imagen
+        style={{ backgroundImage: 'url("https://i.ibb.co/ZBzxPtF/holiday-hotel-las-vegas.png")' }} 
       >
         <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-center px-6">
           <h1 className="text-5xl font-extrabold text-white mb-4">
