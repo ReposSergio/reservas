@@ -4,6 +4,8 @@ using BookingReservationsAPI.Data;
 using BookingReservationsAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace BookingReservationsAPI.Controllers
 {
@@ -22,9 +24,15 @@ namespace BookingReservationsAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> CreateCustomer([FromBody] Customer customer)
         {
-            if (customer == null || string.IsNullOrWhiteSpace(customer.Name))
+            if (customer == null || string.IsNullOrWhiteSpace(customer.Name) || string.IsNullOrWhiteSpace(customer.Email) || string.IsNullOrWhiteSpace(customer.Password))
             {
-                return BadRequest("El cliente no es válido.");
+                return BadRequest("El cliente no es válido. Asegúrate de que los campos Nombre, Email y Contraseña no estén vacíos.");
+            }
+
+            // Validar formato del correo electrónico
+            if (!IsValidEmail(customer.Email))
+            {
+                return BadRequest("El correo electrónico no tiene un formato válido.");
             }
 
             _context.Customers.Add(customer);
@@ -78,6 +86,14 @@ namespace BookingReservationsAPI.Controllers
 
             // Actualizar las propiedades del cliente
             customer.Name = updatedCustomer.Name;
+            customer.Email = updatedCustomer.Email;  // Actualizar Email
+            customer.Password = updatedCustomer.Password;  // Actualizar Password
+
+            // Validar el formato del correo electrónico
+            if (!IsValidEmail(customer.Email))
+            {
+                return BadRequest("El correo electrónico no tiene un formato válido.");
+            }
 
             try
             {
@@ -117,6 +133,13 @@ namespace BookingReservationsAPI.Controllers
         private bool CustomerExists(int id)
         {
             return _context.Customers.Any(c => c.Id == id);
+        }
+
+        // Función para validar el formato del email
+        private bool IsValidEmail(string email)
+        {
+            var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+            return emailRegex.IsMatch(email);
         }
     }
 }

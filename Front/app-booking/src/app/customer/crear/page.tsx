@@ -4,6 +4,8 @@ import axios from "axios";
 
 const CustomerForm = () => {
   const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -13,8 +15,16 @@ const CustomerForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim()) {
-      setErrorMessage("El nombre del cliente es obligatorio.");
+    // Validación de campos
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setErrorMessage("El nombre, correo electrónico y contraseña son obligatorios.");
+      return;
+    }
+
+    // Validación del formato de correo electrónico
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("El correo electrónico no tiene un formato válido.");
       return;
     }
 
@@ -23,9 +33,11 @@ const CustomerForm = () => {
     setSuccessMessage(null);
 
     try {
-      await axios.post(API_BASE_URL, { name });
+      await axios.post(API_BASE_URL, { name, email, password });
       setSuccessMessage("El cliente se ha creado con éxito.");
       setName("");
+      setEmail("");
+      setPassword("");
     } catch (error) {
       setErrorMessage(
         "Ocurrió un error al crear el cliente. Por favor, inténtalo nuevamente."
@@ -62,6 +74,38 @@ const CustomerForm = () => {
             onChange={(e) => setName(e.target.value)}
             className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
             placeholder="Ejemplo: Cliente A"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="ejemplo@correo.com"
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            placeholder="********"
           />
         </div>
         <button

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BookingReservationsAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241119235606_UpdateBookingModelTwo")]
-    partial class UpdateBookingModelTwo
+    [Migration("20241120232808_AddEmailAndPasswordToCustomer")]
+    partial class AddEmailAndPasswordToCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace BookingReservationsAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("integer");
@@ -59,7 +59,15 @@ namespace BookingReservationsAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -75,6 +83,10 @@ namespace BookingReservationsAPI.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -11,27 +11,19 @@ const ReservationForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(clientId,
-      serviceId,
-      reservationDate,
-      notes);
+    console.log(clientId, serviceId, reservationDate, notes);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/bookings",
-        {
-          clientId,
-          serviceId,
-          reservationDate,
-          notes        
-        }
-      );
+      const response = await axios.post("http://localhost:5000/api/bookings", {
+        clientId,
+        serviceId,
+        reservationDate,
+        notes,
+      });
 
       console.log("Reservation created successfully:", response.data);
-      // Puedes manejar la respuesta exitosa aquí, como limpiar el formulario o mostrar un mensaje de éxito.
     } catch (error) {
       console.error("Error creating reservation:", error);
-      // Maneja el error, muestra un mensaje de error o realiza acciones adicionales.
     }
   };
 
@@ -113,7 +105,8 @@ const ReservationForm: React.FC = () => {
       >
         Create Reservation
       </button>
-      <a href="http://localhost:3000/reserva/editar"
+      <a
+        href="http://localhost:3000/reserva/editar"
         className=" block w-full bg-indigo-600 text-center text-white py-2 px-4  m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Edit Reservation

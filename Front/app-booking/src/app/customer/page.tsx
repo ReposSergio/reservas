@@ -4,21 +4,24 @@ import axios from "axios";
 
 interface Customer {
   id: number;
+  email: string;
   name: string;
+  password: string;
 }
 
-const CustomerTable = () => {
+const CustomerList = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Estado para edición
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editedName, setEditedName] = useState<string>("");
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const API_BASE_URL = "http://localhost:5000/api/customer";
 
-  // Cargar los clientes desde la API
   const fetchCustomers = async () => {
     setLoading(true);
     try {
@@ -35,7 +38,6 @@ const CustomerTable = () => {
     fetchCustomers();
   }, []);
 
-  // Eliminar un cliente
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`${API_BASE_URL}/${id}`);
@@ -45,28 +47,31 @@ const CustomerTable = () => {
     }
   };
 
-  // Iniciar la edición de un cliente
   const handleEdit = (customer: Customer) => {
-    setEditingId(customer.id);
-    setEditedName(customer.name);
+    setEditingCustomer(customer);
+    setEmail(customer.email);
+    setName(customer.name);
+    setPassword(customer.password);
   };
 
-  // Guardar cambios después de editar
   const handleUpdate = async () => {
-    if (editingId === null) return;
+    if (!editingCustomer) return;
 
     try {
-      const updatedCustomer = { id: editingId, name: editedName };
-      await axios.put(`${API_BASE_URL}/${editingId}`, updatedCustomer);
+      const updatedCustomer = { ...editingCustomer, email, name, password };
+      await axios.put(`${API_BASE_URL}/${editingCustomer.id}`, updatedCustomer);
 
       setCustomers(
         customers.map((customer) =>
-          customer.id === editingId ? updatedCustomer : customer
+          customer.id === editingCustomer.id ? updatedCustomer : customer
         )
       );
 
-      setEditingId(null);  // Desactivar el modo de edición
-      setEditedName("");  // Resetear los valores
+      // Resetear el formulario de edición
+      setEditingCustomer(null);
+      setEmail("");
+      setName("");
+      setPassword("");
     } catch (err) {
       setError("Error al actualizar el cliente. Inténtalo de nuevo.");
     }
@@ -77,73 +82,102 @@ const CustomerTable = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4 text-center">Clientes</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">ID</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Nombre</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((customer) => (
-              <tr key={customer.id} className="border-b border-gray-200">
-                <td className="px-4 py-2 text-sm text-gray-700">{customer.id}</td>
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {editingId === customer.id ? (
-                    <input
-                      type="text"
-                      value={editedName}
-                      onChange={(e) => setEditedName(e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      autoFocus
-                    />
-                  ) : (
-                    customer.name
-                  )}
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-700 flex space-x-2">
-                  {editingId === customer.id ? (
-                    <>
-                      <button
-                        onClick={handleUpdate}
-                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                      >
-                        Guardar
-                      </button>
-                      <button
-                        onClick={() => setEditingId(null)}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                      >
-                        Cancelar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => handleEdit(customer)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(customer.id)}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-                      >
-                        Eliminar
-                      </button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <h1 className="text-xl font-bold mb-4 text-center">Clientes Disponibles</h1>
+      {customers.length > 0 ? (
+        <ul className="space-y-4">
+          {customers.map((customer) => (
+            <li
+              key={customer.id}
+              className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
+            >
+              <h2 className="text-lg font-semibold">{customer.name}</h2>
+              <p className="text-gray-600">{customer.email}</p>
+              <div className="mt-4 flex space-x-2">
+                <button
+                  onClick={() => handleEdit(customer)}
+                  className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => handleDelete(customer.id)}
+                  className="bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center text-gray-500">No hay clientes disponibles.</p>
+      )}
+
+      {editingCustomer && (
+        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">Editar Cliente</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleUpdate();
+            }}
+          >
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+                Email del Cliente
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
+                Nombre del Cliente
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex space-x-2">
+              <button
+                type="submit"
+                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              >
+                Guardar
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingCustomer(null)}
+                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
 
-export default CustomerTable;
+export default CustomerList;
