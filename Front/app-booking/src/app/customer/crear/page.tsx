@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
+declare module 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
+
 
 const CustomerForm = () => {
   const [name, setName] = useState<string>("");
@@ -28,12 +31,16 @@ const CustomerForm = () => {
       return;
     }
 
+    // Hashear la contraseña antes de enviarla
+    const hashedPassword = bcrypt.hashSync(password, 10); // Aquí se hashea la contraseña
+
     setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
-      await axios.post(API_BASE_URL, { name, email, password });
+      // Enviar los datos al backend, incluyendo la contraseña ya hasheada
+      await axios.post(API_BASE_URL, { name, email, PasswordHash: hashedPassword });
       setSuccessMessage("El cliente se ha creado con éxito.");
       setName("");
       setEmail("");

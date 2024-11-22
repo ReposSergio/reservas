@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text.RegularExpressions;
+using BCrypt.Net;  // Asegúrate de haber instalado el paquete BCrypt.Net-Next
 
 namespace BookingReservationsAPI.Controllers
 {
@@ -24,7 +25,7 @@ namespace BookingReservationsAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Customer>> CreateCustomer([FromBody] Customer customer)
         {
-            if (customer == null || string.IsNullOrWhiteSpace(customer.Name) || string.IsNullOrWhiteSpace(customer.Email) || string.IsNullOrWhiteSpace(customer.Password))
+            if (customer == null || string.IsNullOrWhiteSpace(customer.Name) || string.IsNullOrWhiteSpace(customer.Email) || string.IsNullOrWhiteSpace(customer.PasswordHash))
             {
                 return BadRequest("El cliente no es válido. Asegúrate de que los campos Nombre, Email y Contraseña no estén vacíos.");
             }
@@ -34,6 +35,9 @@ namespace BookingReservationsAPI.Controllers
             {
                 return BadRequest("El correo electrónico no tiene un formato válido.");
             }
+
+            // Hashear la contraseña antes de guardarla
+            customer.SetPassword(customer.PasswordHash); // Hasheando la contraseña
 
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
@@ -87,7 +91,12 @@ namespace BookingReservationsAPI.Controllers
             // Actualizar las propiedades del cliente
             customer.Name = updatedCustomer.Name;
             customer.Email = updatedCustomer.Email;  // Actualizar Email
-            customer.Password = updatedCustomer.Password;  // Actualizar Password
+
+            // Si se proporciona una nueva contraseña, hashearla y actualizarla
+            if (!string.IsNullOrWhiteSpace(updatedCustomer.PasswordHash)) 
+            {
+                customer.SetPassword(updatedCustomer.PasswordHash); // Hashear nueva contraseña
+            }
 
             // Validar el formato del correo electrónico
             if (!IsValidEmail(customer.Email))
