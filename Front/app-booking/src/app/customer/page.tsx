@@ -2,11 +2,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// Actualizamos la interfaz para que el tipo sea correcto según la respuesta de Postman
+interface Reservation {
+  $id: string;
+  $values: any[]; // Arreglo vacío, pero puede cambiar si se añaden reservas
+}
+
 interface Customer {
   id: number;
   email: string;
   name: string;
-  password: string;
+  passwordHash: string;
+  salt: string;
+  reservations: Reservation; // Ajustamos la propiedad de reservas
 }
 
 const CustomerList = () => {
@@ -20,13 +28,16 @@ const CustomerList = () => {
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const API_BASE_URL = "http://localhost:5000/api/customer";
+  const API_BASE_URL = "http://localhost:5000/api/clients";
 
+  // Modificamos la función para trabajar con el formato de la respuesta
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get<Customer[]>(API_BASE_URL);
-      setCustomers(response.data);
+      const response = await axios.get(API_BASE_URL);
+      
+      // La respuesta está dentro de la propiedad "$values"
+      setCustomers(response.data.$values);
     } catch (err) {
       setError("Error al cargar los clientes. Inténtalo de nuevo.");
     } finally {
@@ -51,7 +62,7 @@ const CustomerList = () => {
     setEditingCustomer(customer);
     setEmail(customer.email);
     setName(customer.name);
-    setPassword(customer.password);
+    setPassword(""); // Limpiar la contraseña al editar
   };
 
   const handleUpdate = async () => {

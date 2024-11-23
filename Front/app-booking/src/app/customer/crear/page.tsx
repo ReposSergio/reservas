@@ -1,8 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import * as bcrypt from "bcryptjs";
+
+interface Reservation {
+  id: number;
+  reservationDate: string;
+  notes: string;
+}
+
+interface Client {
+  id: number;
+  name: string;
+  email: string;
+  reservations: Reservation[];
+}
 
 const CustomerForm = () => {
+  const [clients, setClients] = useState<Client[]>([]);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -10,38 +25,57 @@ const CustomerForm = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const API_BASE_URL = "http://localhost:5000/api/customer";
+  const API_BASE_URL = "http://localhost:5000/api/clients";
+
+  // Obtener la lista de clientes
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get<{ $values: Client[] }>(API_BASE_URL);
+      setClients(response.data.$values);
+    } catch (error) {
+      setErrorMessage("Error al cargar los clientes.");
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación de campos
     if (!name.trim() || !email.trim() || !password.trim()) {
       setErrorMessage("El nombre, correo electrónico y contraseña son obligatorios.");
       return;
     }
 
-    // Validación del formato de correo electrónico
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       setErrorMessage("El correo electrónico no tiene un formato válido.");
       return;
     }
 
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
     setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
     try {
-      await axios.post(API_BASE_URL, { name, email, password });
+      // Realizando el POST con el nuevo cliente y un arreglo vacío de reservas
+      await axios.post(API_BASE_URL, { 
+        name, 
+        email, 
+        password: hashedPassword, // Enviar la contraseña ya hasheada
+        reservations: [] 
+      });
       setSuccessMessage("El cliente se ha creado con éxito.");
       setName("");
       setEmail("");
       setPassword("");
+      fetchClients(); // Actualizar la lista de clientes
     } catch (error) {
-      setErrorMessage(
-        "Ocurrió un error al crear el cliente. Por favor, inténtalo nuevamente."
-      );
+      setErrorMessage("Ocurrió un error al crear el cliente.");
     } finally {
       setLoading(false);
     }
@@ -120,6 +154,31 @@ const CustomerForm = () => {
           {loading ? "Creando..." : "Crear Cliente"}
         </button>
       </form>
+
+      {/* Listado de clientes */}
+      <h2 className="text-xl font-bold mt-8 mb-4 text-center">Clientes Registrados</h2>
+      <ul className="space-y-4">
+        {clients.map((client) => (
+          <li
+            key={client.id}
+            className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
+          >
+            <h3 className="text-lg font-semibold">{client.name}</h3>
+            <p className="text-gray-600">Correo: {client.email}</p>
+            {client.reservations.length > 0 ? (
+              <ul className="mt-2 list-disc list-inside text-gray-600">
+                {client.reservations.map((reservation) => (
+                  <li key={reservation.id}>
+                    Fecha: {new Date(reservation.reservationDate).toLocaleString()} - Notas: {reservation.notes}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-500">No hay reservas asociadas.</p>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

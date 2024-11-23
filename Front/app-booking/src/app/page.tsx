@@ -23,7 +23,7 @@ export default function Home() {
               Reservaciones
             </a>
             <a
-              href="http://localhost:3000/customer"
+              href="http://localhost:3000/login"
               className="bg-transparent border border-white text-white font-semibold py-2 px-6 rounded-lg hover:bg-white hover:text-black transition-all"
             >
               LogIn
