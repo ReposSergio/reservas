@@ -43,7 +43,7 @@ const Login = () => {
 
     try {
       const response = await axios.post<LoginResponse>(
-        "http://localhost:5000/api/login/login",
+        "http://localhost:5000/api/authentication/login",
         loginData
       );
 
@@ -54,7 +54,7 @@ const Login = () => {
         localStorage.setItem("token", response.data.Token);
 
         // Redirigir a la página de inicio o dashboard
-        router.push("/dashboard");
+        router.push("/customer");
 
         console.log("Token guardado en localStorage:", localStorage.getItem("token"));
       }

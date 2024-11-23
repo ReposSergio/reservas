@@ -5,8 +5,8 @@ namespace BookingSystem.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-
-        // Relación: Un cliente puede tener muchas reservas, pero no es obligatorio incluirlas al crear un cliente
+        public string PasswordHash { get; set; }
+         public string Salt { get; set; }       
         public List<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

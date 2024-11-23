@@ -66,7 +66,7 @@ const CustomerForm = () => {
       await axios.post(API_BASE_URL, { 
         name, 
         email, 
-        PasswordHash: hashedPassword, 
+        password: hashedPassword, // Enviar la contraseña ya hasheada
         reservations: [] 
       });
       setSuccessMessage("El cliente se ha creado con éxito.");

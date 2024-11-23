@@ -1,14 +1,32 @@
 using BookingSystem.Data;
-using BookingSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
+using BookingSystem.Interfaces;
+using BookingSystem.Services;
 using System.Text;
-using BookingSystem.Middleware;  // Asegúrate de agregar el espacio de nombres para el middleware
+using BookingSystem.Middleware;  // Middleware personalizado para manejo de errores
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
+
+Console.WriteLine($"Jwt Key from Configuration: {builder.Configuration["Jwt:Key"]}");
+Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("BookingDb")}");
+// Registrar el servicio de JWT
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
+
+var secretKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(secretKey))
+{
+    throw new ArgumentNullException("Jwt:Key", "La clave secreta de JWT no está configurada.");
+}
+Console.WriteLine($"Jwt Key: {secretKey}");
+
+// Configurar CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost3000", policy =>
@@ -23,7 +41,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BookingDb")));
 
-// Configuración de JWT Authentication
+// Configurar JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -35,9 +53,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
+
+// Configurar JSON en controladores
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -45,30 +65,28 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
     });
 
-// Agregar servicios de controlador y swagger
-builder.Services.AddControllers();
+// Agregar servicios para Swagger y logging
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-// Agregar logging
 builder.Services.AddLogging();
 
 var app = builder.Build();
 
-// Configurar middleware de manejo de errores (ErrorHandlingMiddleware)
+// Configurar middleware personalizado de manejo de errores
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+// Configurar CORS
 app.UseCors("AllowLocalhost3000");
 
 // Configurar Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Autenticación y autorización
+// Configurar autenticación y autorización
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configurar las rutas de los controladores
+// Configurar rutas de controladores
 app.MapControllers();
 
 app.Run();

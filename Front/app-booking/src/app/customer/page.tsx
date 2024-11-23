@@ -3,11 +3,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 // Actualizamos la interfaz para que el tipo sea correcto según la respuesta de Postman
+interface Reservation {
+  $id: string;
+  $values: any[]; // Arreglo vacío, pero puede cambiar si se añaden reservas
+}
+
 interface Customer {
   id: number;
   email: string;
   name: string;
-  reservations: { $id: string; $values: [] }; // La propiedad "reservations" que contiene $id y $values
+  passwordHash: string;
+  salt: string;
+  reservations: Reservation; // Ajustamos la propiedad de reservas
 }
 
 const CustomerList = () => {
