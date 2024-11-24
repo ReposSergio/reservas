@@ -5,26 +5,29 @@ using Microsoft.IdentityModel.Tokens;
 using BookingSystem.Interfaces;
 using BookingSystem.Services;
 using System.Text;
-using BookingSystem.Middleware;  // Middleware personalizado para manejo de errores
+using BookingSystem.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Leer configuración de JwtSettings
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"];
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
 
-
-
-
-Console.WriteLine($"Jwt Key from Configuration: {builder.Configuration["Jwt:Key"]}");
-Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("BookingDb")}");
-// Registrar el servicio de JWT
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-
-
-var secretKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrEmpty(secretKey))
 {
-    throw new ArgumentNullException("Jwt:Key", "La clave secreta de JWT no está configurada.");
+    throw new ArgumentNullException("JwtSettings:SecretKey", "La clave secreta de JWT no está configurada.");
 }
-Console.WriteLine($"Jwt Key: {secretKey}");
+
+// Mostrar configuración para depuración
+Console.WriteLine($"Jwt Secret Key: {secretKey}");
+Console.WriteLine($"Issuer: {issuer}");
+Console.WriteLine($"Audience: {audience}");
+Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("BookingDb")}");
+
+// Registrar servicios
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Configurar CORS
 builder.Services.AddCors(options =>
@@ -41,7 +44,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("BookingDb")));
 
-// Configurar JWT Authentication
+// Configurar autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -51,8 +54,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = issuer,
+            ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
