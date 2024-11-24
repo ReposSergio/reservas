@@ -69,13 +69,13 @@ const CustomerForm = () => {
         password: hashedPassword, // Enviar la contraseña ya hasheada
         reservations: [] 
       });
-      setSuccessMessage("El cliente se ha creado con éxito.");
+      setSuccessMessage("Usuario se ha creado con éxito.");
       setName("");
       setEmail("");
       setPassword("");
       fetchClients(); // Actualizar la lista de clientes
     } catch (error) {
-      setErrorMessage("Ocurrió un error al crear el cliente.");
+      setErrorMessage("Ocurrió un error al crear el Usuario.");
     } finally {
       setLoading(false);
     }
@@ -83,7 +83,7 @@ const CustomerForm = () => {
 
   return (
     <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-4 text-center">Crear Nuevo Cliente</h1>
+      <h1 className="text-xl font-bold mb-4 text-center">Crear Cuenta</h1>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg p-6 border border-gray-200"
@@ -99,7 +99,7 @@ const CustomerForm = () => {
             htmlFor="name"
             className="block text-gray-700 font-medium mb-2"
           >
-            Nombre del Cliente
+            Nombre del Usuario
           </label>
           <input
             type="text"
@@ -151,7 +151,7 @@ const CustomerForm = () => {
               : "bg-blue-500 hover:bg-blue-600"
           }`}
         >
-          {loading ? "Creando..." : "Crear Cliente"}
+          {loading ? "Creando..." : "Crear Cuenta"}
         </button>
       </form>
 

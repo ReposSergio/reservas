@@ -115,6 +115,11 @@ const Login = () => {
           >
             {isLoading ? "Cargando..." : "Iniciar Sesión"}
           </button>
+          <a 
+          href="http://localhost:3000/customer/crear" 
+          className="block  ml-1 w-full py-2 text-center bg-blue-500 text-white rounded-lg hover:bg-blue-600  focus:ring-2 focus:ring-blue-500 ">
+          Crear Cuenta
+          </a>
         </form>
       </div>
     </div>

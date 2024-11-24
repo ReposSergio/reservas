@@ -14,7 +14,8 @@ const ReservationForm: React.FC = () => {
     console.log(clientId, serviceId, reservationDate, notes);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/bookings", {
+      // Realizamos el POST a la API de reservas
+      const response = await axios.post("http://localhost:5000/api/reservations", {
         clientId,
         serviceId,
         reservationDate,
@@ -101,13 +102,13 @@ const ReservationForm: React.FC = () => {
 
       <button
         type="submit"
-        className="w-full m-1 bg-indigo-600  text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full m-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Create Reservation
       </button>
       <a
         href="http://localhost:3000/reserva/editar"
-        className=" block w-full bg-indigo-600 text-center text-white py-2 px-4  m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className=" block w-full bg-indigo-600 text-center text-white py-2 px-4 m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Edit Reservation
       </a>

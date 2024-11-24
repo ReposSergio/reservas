@@ -17,29 +17,23 @@ export default function Home() {
           </p>
           <div className="space-x-4">
             <a
-              href="http://localhost:3000/reserva"
+              href="http://localhost:3000/login"
               className="bg-white text-black font-semibold py-2 px-6 rounded-lg hover:bg-gray-200 transition-all"
             >
-              Reservaciones
+              Login
             </a>
             <a
-              href="http://localhost:3000/login"
+              href="http://localhost:3000/services"
               className="bg-transparent border border-white text-white font-semibold py-2 px-6 rounded-lg hover:bg-white hover:text-black transition-all"
             >
-              LogIn
+              Reservas
             </a>
 
             <a
               href="http://localhost:3000/customer/crear"
               className="bg-transparent border border-white text-white font-semibold py-2 px-6 rounded-lg hover:bg-white hover:text-black transition-all"
             >
-              SingUp
-            </a>
-            <a
-              href="http://localhost:3000/services"
-              className="bg-transparent border border-white text-white font-semibold py-2 px-6 rounded-lg hover:bg-white hover:text-black transition-all"
-            >
-              Servicios
+              Crear Cuenta
             </a>
           </div>
         </div>
@@ -64,7 +58,7 @@ export default function Home() {
             Reserve su Próxima Estadía
           </h2>
           <a
-            href="http://localhost:3000/reserva"
+            href="http://localhost:3000/login"
             className="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-all"
           >
             Hacer una Reserva
