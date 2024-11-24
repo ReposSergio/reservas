@@ -8,6 +8,7 @@ const ReservationForm: React.FC = () => {
   const [serviceId, setServiceId] = useState<number | null>(null);
   const [reservationDate, setReservationDate] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Estado para el mensaje de éxito
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +24,19 @@ const ReservationForm: React.FC = () => {
       });
 
       console.log("Reservation created successfully:", response.data);
+
+      // Actualizamos el mensaje de éxito
+      setSuccessMessage("Reservation created successfully.");
+      
+      // Limpiar el formulario después de un éxito (opcional)
+      setClientId(null);
+      setServiceId(null);
+      setReservationDate("");
+      setNotes("");
+      
+      // Ocultar el mensaje de éxito después de 3 segundos
+      setTimeout(() => setSuccessMessage(null), 3000);
+
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
@@ -33,6 +47,10 @@ const ReservationForm: React.FC = () => {
       onSubmit={handleSubmit}
       className="max-w-md mx-auto p-4 border rounded-lg shadow-lg space-y-4"
     >
+      {successMessage && (
+        <p className="text-green-500 text-center">{successMessage}</p> // Muestra el mensaje de éxito
+      )}
+      
       <div>
         <label
           htmlFor="clientId"
@@ -108,7 +126,7 @@ const ReservationForm: React.FC = () => {
       </button>
       <a
         href="http://localhost:3000/reserva/editar"
-        className=" block w-full bg-indigo-600 text-center text-white py-2 px-4 m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="block w-full bg-indigo-600 text-center text-white py-2 px-4 m-1 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Edit Reservation
       </a>

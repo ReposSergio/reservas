@@ -8,7 +8,6 @@ namespace BookingSystem.Models
         {
         }
 
-        // Inicialización implícita para evitar CS8618
         public DbSet<Client> Clients { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
     }

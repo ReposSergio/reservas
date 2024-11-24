@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";  
+import { useRouter } from "next/navigation";
 
 interface LoginData {
   email: string;
@@ -13,8 +13,10 @@ interface LoginResponse {
   Name: string;
   Email: string;
   Token: string;
+  $id: string;  
   Message: string;
 }
+
 
 const Login = () => {
   const [loginData, setLoginData] = useState<LoginData>({
@@ -24,9 +26,9 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const router = useRouter();  // Hook para redirección después del login
+  const router = useRouter();  
 
-  // Manejo de cambios en los inputs
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({
@@ -35,7 +37,7 @@ const Login = () => {
     }));
   };
 
-  // Manejo de la sumisión del formulario
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -50,13 +52,14 @@ const Login = () => {
       if (response.data) {
         console.log("Login exitoso:", response.data);
 
-        // Guardar el token en el almacenamiento local
+        // Guardar el token y el $id en el almacenamiento local
         localStorage.setItem("token", response.data.Token);
+        localStorage.setItem("$id", response.data.$id);
 
         // Redirigir a la página de inicio o dashboard
-        router.push("/customer");
+        router.push("/user");
 
-        console.log("Token guardado en localStorage:", localStorage.getItem("token"));
+        console.log("Token y $id guardados en localStorage:", localStorage.getItem("token"), localStorage.getItem("$id"));
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Error al iniciar sesión. Verifica tus credenciales.");
@@ -117,7 +120,7 @@ const Login = () => {
           </button>
           <a 
           href="http://localhost:3000/customer/crear" 
-          className="block  ml-1 w-full py-2 text-center bg-blue-500 text-white rounded-lg hover:bg-blue-600  focus:ring-2 focus:ring-blue-500 ">
+          className="block ml-1 w-full py-2 text-center bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500">
           Crear Cuenta
           </a>
         </form>

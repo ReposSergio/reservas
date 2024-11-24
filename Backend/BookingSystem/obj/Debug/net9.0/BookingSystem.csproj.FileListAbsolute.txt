@@ -139,3 +139,4 @@ D:\Prueba Hotel\Backend\BookingSystem\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis
 D:\Prueba Hotel\Backend\BookingSystem\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Prueba Hotel\Backend\BookingSystem\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Prueba Hotel\Backend\BookingSystem\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Prueba Hotel\Backend\BookingSystem\bin\Debug\net9.0\BCrypt.Net-Next.dll

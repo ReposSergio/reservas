@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "BEN33wzUsZ4=",
+  "dgSpecHash": "t295ZHEwK7o=",
   "success": true,
   "projectFilePath": "D:\\Prueba Hotel\\Backend\\BookingSystem\\BookingSystem.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\serma\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\serma\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\serma\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\serma\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.0\\microsoft.aspnetcore.authentication.jwtbearer.9.0.0.nupkg.sha512",

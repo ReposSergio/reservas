@@ -72,7 +72,35 @@ namespace BookingSystem.Controllers
             return Ok(reservation);
         }
 
-        // Modificar una reserva existente
+
+        // Obtener todas las reservas de un cliente con filtros opcionales
+        // Obtener todas las reservas de un cliente con filtros opcionales
+        [HttpGet("client/{clientId}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationsByClientId(
+            int clientId,
+            [FromQuery] int? serviceId,
+            [FromQuery] DateTime? date)
+        {
+            var query = _context.Reservations.AsQueryable();
+
+            // Filtrar por clientId
+            query = query.Where(r => r.ClientId == clientId);
+
+            // Filtros adicionales
+            if (serviceId.HasValue)
+            {
+                query = query.Where(r => r.ServiceId == serviceId);
+            }
+
+            if (date.HasValue)
+            {
+                query = query.Where(r => r.ReservationDate.Date == date.Value.Date);
+            }
+
+            // Devolver las reservas filtradas
+            return await query.ToListAsync();
+        }
+
         // Modificar una reserva existente
         [HttpPut("{id}")]
         public async Task<IActionResult> PutReservation(int id, [FromBody] Reservation reservation)
