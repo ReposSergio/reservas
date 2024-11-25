@@ -1,19 +1,20 @@
-version: '3.8'
 services:
   backend:
     build:
-      context: ./backend
+      context: ./Backend/BookingSystem
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
     environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Database=TuBaseDeDatos;Username=postgres;Password=postgres
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - ConnectionStrings__DefaultConnection=Host=db;Database=BookingDB;Username=postgres;Password=Datecsa2018
+     
     depends_on:
       - db
 
   frontend:
     build:
-      context: ./frontend
+      context: ./Front/app-booking
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -26,8 +27,8 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: TuBaseDeDatos
+      POSTGRES_PASSWORD: Datecsa2018
+      POSTGRES_DB: BookingDB
     ports:
       - "5432:5432"
     volumes:

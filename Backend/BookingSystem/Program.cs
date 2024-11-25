@@ -1,4 +1,3 @@
-using BookingSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +6,7 @@ using BookingSystem.Services;
 using System.Text;
 using BookingSystem.Middleware;
 using BookingSystem.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

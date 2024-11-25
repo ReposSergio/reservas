@@ -15,18 +15,22 @@ interface Reservation {
 
 const ReservationList: React.FC = () => {
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [filteredReservations, setFilteredReservations] = useState<
-    Reservation[]
-  >([]);
+  const [filteredReservations, setFilteredReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Reservation>>({});
   const [searchDate, setSearchDate] = useState<string>(""); // Estado para la fecha de búsqueda
+  const [clientId, setClientId] = useState<string | null>(null); // Estado para el clientId
 
-  // Obtener el $id del cliente desde localStorage
-  const clientId = localStorage.getItem("$id");
+  // Obtener el $id del cliente desde localStorage solo en el cliente
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedClientId = localStorage.getItem("$id");
+      setClientId(storedClientId); // Guardamos el clientId en el estado
+    }
+  }, []);
 
   // Obtener reservas al cargar el componente
   useEffect(() => {
@@ -38,8 +42,7 @@ const ReservationList: React.FC = () => {
 
     const fetchReservations = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/reservations/client/${clientId}`
-        );
+        const response = await axios.get(`http://localhost:5000/api/reservations/client/${clientId}`);
         const reservationsData = response.data.$values;
         setReservations(reservationsData);
         setFilteredReservations(reservationsData); // Inicializar las reservas filtradas
@@ -52,7 +55,7 @@ const ReservationList: React.FC = () => {
     };
 
     fetchReservations();
-  }, []);
+  }, [clientId]);
 
   // Filtrar las reservas según la fecha de búsqueda
   const handleSearchDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
